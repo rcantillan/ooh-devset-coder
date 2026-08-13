@@ -82,9 +82,17 @@
       significa que estas capturando una clausula, no un termino.
       Una oracion con tres acciones son <em>tres menciones cortas</em>, no una larga:
       "strip the walls, package the residue, and place them in approved bags"
-      son tres. Si el texto es verboso, usa span corto y pone el constructo en
-      la etiqueta. Spans largos no agrupan con nada y hunden el acuerdo entre
+      son tres. Spans largos no agrupan con nada y hunden el acuerdo entre
       codificadores sin que haya desacuerdo real.
+    </div>
+    <div style="margin-top:12px;padding-top:11px;border-top:1px solid #ecdca8">
+      <strong>Cuando escribir la etiqueta.</strong> Si el span se explica solo
+      —<em>inspect welds</em>, <em>nutritional programs</em>,
+      <em>supervise staff</em>— no hace falta. Si tuviste que anclar en un verbo
+      pelado porque la oracion era verbosa, escribila: sin etiqueta,
+      <em>create</em> termina agrupando con "create reports" y "create designs"
+      en un cluster de verbos sin sentido. Son los casos minoritarios y son
+      donde el diccionario se juega la calidad.
     </div>
     <div class="row" style="margin-top:10px">
       <button class="ghost" id="hide-intro">Entendido, ocultar</button>
@@ -95,7 +103,10 @@
     <div class="meta" id="meta"></div>
     <div class="sentence" id="sentence"></div>
     <div class="hint">
-      Haces clic en una palabra para empezar el span y en otra para extenderlo.
+      Clic en una palabra abre el span, en otra de afuera lo extiende, y en una
+      de adentro lo colapsa a esa sola palabra. El span debe ser contiguo: si el
+      constructo no cabe en un tramo seguido, ancla el verbo o el sustantivo
+      nucleo y pone el constructo completo en la etiqueta.
       <kbd>N</kbd> marca sin requisito y avanza, <kbd>A</kbd> ambiguo,
       <kbd>1</kbd>..<kbd>4</kbd> el tipo, <kbd>Enter</kbd> agrega la mencion,
       <kbd>&larr;</kbd> <kbd>&rarr;</kbd> navegan.
@@ -110,6 +121,9 @@
     </div>
     <input type="text" id="label" autocomplete="off"
            placeholder="etiqueta (opcional): constructo general, p. ej. comunicacion oral">
+    <div id="onewordhint" class="hint" style="display:none;margin:6px 0 0">
+      Span de una palabra: si no se explica solo, escribi la etiqueta.
+    </div>
     <div class="lab">Tipo <span style="text-transform:none;font-weight:400">(opcional: no entra en el analisis)</span></div>
     <div class="row" id="types">
       <button data-type="skill">1 skill</button>
@@ -219,9 +233,17 @@ function render() {
   $("sentence").querySelectorAll(".w").forEach(el => {
     el.onclick = () => {
       const k = +el.dataset.k;
-      if (anchor === null) { anchor = k; focus = k; }
-      else if (k === anchor && k === focus) { anchor = null; focus = null; }
-      else { focus = k; }
+      const lo2 = anchor === null ? -1 : Math.min(anchor, focus);
+      const hi2 = anchor === null ? -2 : Math.max(anchor, focus);
+      if (anchor === null) {
+        anchor = k; focus = k;                       // start a new span
+      } else if (k === anchor && k === focus) {
+        anchor = null; focus = null;                 // click the single word again: clear
+      } else if (k >= lo2 && k <= hi2) {
+        anchor = k; focus = k;                       // click inside a range: collapse to that word
+      } else {
+        focus = k;                                   // click outside: extend
+      }
       render();
     };
   });
@@ -230,6 +252,7 @@ function render() {
   $("spantxt").textContent = st ? `— ${st}` : "— selecciona palabras arriba";
   $("spantxt").style.color = nw > 5 ? "var(--warn)" : "var(--ink)";
   $("longwarn").style.display = nw > 5 ? "" : "none";
+  $("onewordhint").style.display = nw === 1 && !$("label").value.trim() ? "" : "none";
   $("notes").value = r.notes || "";
   document.querySelectorAll("[data-type]").forEach(b =>
     b.classList.toggle("on", b.dataset.type === type));
