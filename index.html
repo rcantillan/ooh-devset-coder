@@ -92,7 +92,8 @@
 
   <div class="card">
     <div class="lab">Span <span id="spantxt" style="text-transform:none;color:var(--ink);font-weight:400"></span></div>
-    <input type="text" id="label" placeholder="etiqueta: constructo general, p. ej. comunicacion oral">
+    <input type="text" id="label" autocomplete="off"
+           placeholder="etiqueta (opcional): constructo general, p. ej. comunicacion oral">
     <div class="lab">Tipo</div>
     <div class="row" id="types">
       <button data-type="skill">1 skill</button>
@@ -238,7 +239,6 @@ function go(step) {
 $("add").onclick = () => {
   const span = spanText(), label = $("label").value.trim();
   if (!span) return alert("Hace clic en las palabras del span.");
-  if (!label) return alert("Escribi una etiqueta.");
   if (!type) return alert("Elegi un tipo (1-4).");
   const r = rec();
   r.mentions.push({ span, label, type, expl });
@@ -268,11 +268,17 @@ $("coder").oninput = () => { store.coder = $("coder").value.trim(); };
 $("coder").onblur = save;
 $("hide-intro").onclick = () => { $("intro").style.display = "none"; };
 
+// Text fields own their keystrokes: the global shortcuts must never see them.
+["label","notes","coder"].forEach(id => {
+  $(id).addEventListener("keydown", e => {
+    e.stopPropagation();
+    if (e.key === "Enter" && id === "label") $("add").click();
+  });
+});
+
 document.addEventListener("keydown", e => {
-  if (e.target.tagName === "INPUT") {
-    if (e.key === "Enter") $("add").click();
-    return;
-  }
+  const t = e.target;
+  if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.isContentEditable)) return;
   const types = ["skill","ability","knowledge","work_activity"];
   if (["1","2","3","4"].includes(e.key)) { type = types[+e.key-1]; render(); }
   if (e.key === "Enter") $("add").click();
