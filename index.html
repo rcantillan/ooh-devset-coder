@@ -2,129 +2,134 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Codificacion manual - dev set OOH-native</title>
 <style>
   :root {
-    --bg: #f7f7f5; --card: #fff; --ink: #1a1a18; --muted: #6b6b66;
-    --line: #e0e0dc; --accent: #2f6f4e; --warn: #9a5b2c; --sel: #ffe9a8;
+    --bg:#f7f7f5; --card:#fff; --ink:#1a1a18; --muted:#6b6b66;
+    --line:#e0e0dc; --accent:#2f6f4e; --warn:#9a5b2c; --hl:#ffe08a;
   }
-  * { box-sizing: border-box; }
+  * { box-sizing:border-box; }
   body { margin:0; background:var(--bg); color:var(--ink);
          font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; }
-  .wrap { max-width: 880px; margin: 0 auto; padding: 20px 20px 80px; }
-  header { display:flex; align-items:center; gap:16px; margin-bottom:16px; }
-  h1 { font-size:17px; margin:0; font-weight:600; }
+  .wrap { max-width:820px; margin:0 auto; padding:18px 18px 96px; }
+  header { display:flex; align-items:center; gap:14px; margin-bottom:14px; }
+  h1 { font-size:16px; margin:0; font-weight:600; white-space:nowrap; }
+  #coder { width:120px; padding:6px 9px; border:1px solid var(--line);
+           border-radius:7px; font:inherit; }
   .bar { flex:1; height:6px; background:var(--line); border-radius:3px; overflow:hidden; }
   .bar > div { height:100%; background:var(--accent); width:0; transition:width .2s; }
-  .count { font-variant-numeric:tabular-nums; color:var(--muted); font-size:13px; }
+  .count { font-variant-numeric:tabular-nums; color:var(--muted); font-size:13px;
+           white-space:nowrap; }
   .card { background:var(--card); border:1px solid var(--line); border-radius:10px;
-          padding:18px; margin-bottom:14px; }
-  .meta { font-size:12px; color:var(--muted); text-transform:uppercase;
+          padding:16px; margin-bottom:12px; }
+  .meta { font-size:11.5px; color:var(--muted); text-transform:uppercase;
           letter-spacing:.04em; margin-bottom:10px; }
-  .sentence { font-size:20px; line-height:1.5; user-select:text; cursor:text;
-              padding:12px; background:#fcfcfa; border-radius:6px; border:1px solid var(--line); }
-  .sentence::selection, .sentence *::selection { background:var(--sel); }
+  .sentence { font-size:20px; line-height:1.75; padding:12px 14px; background:#fcfcfa;
+              border:1px solid var(--line); border-radius:8px; }
+  .w { cursor:pointer; padding:1px 0; border-radius:3px; }
+  .w:hover { background:#eceae2; }
+  .w.on { background:var(--hl); }
   .hint { font-size:12.5px; color:var(--muted); margin-top:8px; }
-  .row { display:flex; gap:8px; flex-wrap:wrap; margin-top:12px; }
-  button { font:inherit; padding:7px 13px; border:1px solid var(--line);
-           background:#fff; border-radius:7px; cursor:pointer; }
-  button:hover { border-color:#b9b9b3; }
+  .row { display:flex; gap:7px; flex-wrap:wrap; align-items:center; }
+  .lab { font-size:11.5px; color:var(--muted); margin:13px 0 6px; font-weight:600;
+         text-transform:uppercase; letter-spacing:.04em; }
+  button { font:inherit; padding:8px 14px; border:1px solid var(--line);
+           background:#fff; border-radius:8px; cursor:pointer; }
+  button:hover { border-color:#b0b0a8; }
   button.on { background:var(--accent); color:#fff; border-color:var(--accent); }
-  button.ghost { background:transparent; }
-  button.danger { color:var(--warn); border-color:#e6cdb6; }
-  .lab { font-size:12px; color:var(--muted); margin:14px 0 5px; font-weight:600; }
-  input[type=text] { width:100%; padding:8px 10px; border:1px solid var(--line);
-                     border-radius:7px; font:inherit; }
-  .span-box { padding:9px 11px; background:#fff8e1; border:1px solid #ecdca8;
-              border-radius:7px; font-size:14px; min-height:38px; }
-  .span-box.empty { background:#fafafa; border-style:dashed; color:var(--muted); }
+  button.big { padding:11px 18px; font-weight:600; }
+  button.danger { color:var(--warn); border-color:#e6cdb6; padding:4px 9px; font-size:13px; }
+  button.ghost { background:transparent; color:var(--muted); }
+  kbd { font:11px ui-monospace,monospace; background:#f0f0ec; border:1px solid var(--line);
+        border-bottom-width:2px; border-radius:4px; padding:1px 5px; color:var(--muted); }
+  input[type=text] { width:100%; padding:9px 11px; border:1px solid var(--line);
+                     border-radius:8px; font:inherit; }
   table { width:100%; border-collapse:collapse; margin-top:10px; font-size:13.5px; }
-  th,td { text-align:left; padding:7px 8px; border-bottom:1px solid var(--line);
+  th,td { text-align:left; padding:6px 8px; border-bottom:1px solid var(--line);
           vertical-align:top; }
-  th { color:var(--muted); font-weight:600; font-size:11.5px;
+  th { color:var(--muted); font-weight:600; font-size:11px;
        text-transform:uppercase; letter-spacing:.04em; }
   .nav { position:fixed; left:0; right:0; bottom:0; background:var(--card);
-         border-top:1px solid var(--line); padding:11px 20px; }
-  .nav .wrap2 { max-width:880px; margin:0 auto; display:flex; gap:10px;
-                align-items:center; }
+         border-top:1px solid var(--line); padding:10px 18px; }
+  .nav .w2 { max-width:820px; margin:0 auto; display:flex; gap:9px; align-items:center; }
   .spacer { flex:1; }
-  .saved { font-size:12.5px; color:var(--accent); }
-  .pill { display:inline-block; padding:2px 8px; border-radius:20px;
-          background:#eef2ee; color:var(--accent); font-size:11.5px; font-weight:600; }
+  .saved { font-size:12px; color:var(--accent); }
+  .pill { padding:3px 10px; border-radius:20px; background:#eef2ee; color:var(--accent);
+          font-size:11.5px; font-weight:600; }
+  .pill.none { background:#f2f2ef; color:var(--muted); }
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
     <h1>Dev set OOH-native</h1>
-    <input type="text" id="coder" placeholder="tus iniciales"
-           style="width:130px;padding:6px 9px;border:1px solid var(--line);border-radius:7px;font:inherit">
+    <input type="text" id="coder" placeholder="iniciales">
     <div class="bar"><div id="prog"></div></div>
-    <div class="count"><span id="done">0</span>/60 codificadas</div>
+    <div class="count"><span id="done">0</span>/60</div>
   </header>
+
   <div class="card" id="intro" style="background:#fffdf3;border-color:#ecdca8">
-    <strong>Antes de empezar.</strong> Escribi tus iniciales arriba: identifican
-    tu codificacion y permiten medir el acuerdo entre codificadores.
-    Codifica <em>sin consultar</em> con el otro codificador; el acuerdo solo
+    <strong>Antes de empezar.</strong> Escribi tus iniciales arriba.
+    Codifica <em>sin consultar</em> con el otro codificador: el acuerdo solo
     significa algo si las dos codificaciones son independientes.
-    Al terminar, usa <em>Descargar CSV</em> y envia el archivo.
+    La mayoria de las oraciones se resuelven con un solo clic en
+    <em>Sin requisito</em>. Al terminar, <em>Descargar CSV</em> y envia el archivo.
+    <div class="row" style="margin-top:10px">
+      <button class="ghost" id="hide-intro">Entendido, ocultar</button>
+    </div>
   </div>
 
   <div class="card">
     <div class="meta" id="meta"></div>
     <div class="sentence" id="sentence"></div>
-    <div class="hint">Selecciona texto con el mouse para capturar el span exacto.</div>
-
-    <div class="lab">Evaluacion de la unidad</div>
-    <div class="row">
-      <button data-assess="contains_requirement">Contiene requisito</button>
-      <button data-assess="no_requirement">Sin requisito</button>
-      <button data-assess="ambiguous">Ambiguo</button>
+    <div class="hint">
+      Haces clic en una palabra para empezar el span y en otra para extenderlo.
+      <kbd>1</kbd>..<kbd>4</kbd> eligen el tipo, <kbd>Enter</kbd> agrega la mencion,
+      <kbd>&larr;</kbd> <kbd>&rarr;</kbd> navegan.
     </div>
   </div>
 
-  <div class="card" id="mention-card">
-    <div class="lab">Span seleccionado</div>
-    <div class="span-box empty" id="span">nada seleccionado</div>
-
-    <div class="lab">Etiqueta (constructo general, independiente de la ocupacion)</div>
-    <input type="text" id="label" placeholder="p. ej. comunicacion oral">
-
+  <div class="card">
+    <div class="lab">Span <span id="spantxt" style="text-transform:none;color:var(--ink);font-weight:400"></span></div>
+    <input type="text" id="label" placeholder="etiqueta: constructo general, p. ej. comunicacion oral">
     <div class="lab">Tipo</div>
     <div class="row" id="types">
-      <button data-type="skill">skill</button>
-      <button data-type="ability">ability</button>
-      <button data-type="knowledge">knowledge</button>
-      <button data-type="work_activity">work_activity</button>
+      <button data-type="skill">1 skill</button>
+      <button data-type="ability">2 ability</button>
+      <button data-type="knowledge">3 knowledge</button>
+      <button data-type="work_activity">4 work_activity</button>
     </div>
-
-    <div class="lab">Explicitud</div>
+    <div class="lab">Explicitud <span style="text-transform:none;font-weight:400">(por defecto explicit)</span></div>
     <div class="row" id="expl">
       <button data-expl="explicit">explicit</button>
       <button data-expl="strongly_implied">strongly_implied</button>
       <button data-expl="ambiguous">ambiguous</button>
     </div>
-
-    <div class="row">
-      <button id="add" class="on">Agregar mencion</button>
-      <button id="clear" class="ghost">Limpiar</button>
+    <div class="row" style="margin-top:14px">
+      <button id="add" class="on big">Agregar mencion</button>
+      <button id="clear" class="ghost">Limpiar span</button>
     </div>
-
     <table id="tbl"><thead><tr>
       <th>Span</th><th>Etiqueta</th><th>Tipo</th><th>Explicitud</th><th></th>
     </tr></thead><tbody></tbody></table>
   </div>
 
   <div class="card">
+    <div class="row">
+      <button id="none" class="big">Sin requisito</button>
+      <button id="amb">Ambiguo</button>
+      <span class="hint" style="margin:0">Estas marcan la unidad y avanzan.</span>
+    </div>
     <div class="lab">Notas (opcional)</div>
-    <input type="text" id="notes" placeholder="dudas, casos limite, comentarios">
+    <input type="text" id="notes" placeholder="dudas, casos limite">
   </div>
 </div>
 
-<div class="nav"><div class="wrap2">
-  <button id="prev">&larr; Anterior</button>
-  <button id="next">Siguiente &rarr;</button>
-  <span class="pill" id="status">sin codificar</span>
+<div class="nav"><div class="w2">
+  <button id="prev">&larr;</button>
+  <button id="next">&rarr;</button>
+  <span class="pill none" id="status">sin codificar</span>
   <div class="spacer"></div>
   <span class="saved" id="saved"></span>
   <button id="export" class="on">Descargar CSV</button>
@@ -132,20 +137,32 @@
 
 <script>
 const UNITS = [{"dev_order": "1", "unit_id": "production/metal-and-plastic-machine-workers|2014|20140703023313|t02|s002|b017|u001", "occupation": "Metal and plastic machine workers", "section": "duties", "subsection": "Duties", "evidence_text": "After a setter prepares a machine for production, an operator observes the machine and the products it makes."}, {"dev_order": "2", "unit_id": "management/computer-and-information-systems-managers|2014|20140704015943|t02|s002|b019|u003", "occupation": "Computer and information systems managers", "section": "duties", "subsection": "Duties", "evidence_text": "They develop programs to keep employees aware of security threats."}, {"dev_order": "3", "unit_id": "construction-and-extraction/hazardous-materials-removal-workers|2014|20140704024837|t02|s002|b014|u002", "occupation": "Hazardous materials removal workers", "section": "duties", "subsection": "Duties", "evidence_text": "Once applied, workers strip the walls, package the residue and paint chips, and place them in approved bags or containers for proper disposal."}, {"dev_order": "4", "unit_id": "installation-maintenance-and-repair/medical-equipment-repairers|2014|20140704025448|t02|s002|b010|u001", "occupation": "Medical equipment repairers", "section": "duties", "subsection": "Duties", "evidence_text": "If a machine has problems or is not functioning to its potential, the repairer may have to adjust the mechanical or hydraulic parts, or adjust the software in order to recalibrate the equipment."}, {"dev_order": "5", "unit_id": "healthcare/dietitians-and-nutritionists|2012|20120616172241|t02|s002|b010|u003", "occupation": "Dietitians and Nutritionists", "section": "duties", "subsection": "Duties", "evidence_text": "They create both individualized and group nutritional programs based on the health needs of patients or residents."}, {"dev_order": "6", "unit_id": "protective-service/police-and-detectives|2013|20130630002625|t02|s002|b030|u001", "occupation": "Police and detectives", "section": "duties", "subsection": "Duties", "evidence_text": "Detectives and criminal investigators are plainclothes investigators who gather facts and collect evidence for criminal cases."}, {"dev_order": "7", "unit_id": "building-and-grounds-cleaning/maids-and-housekeeping-cleaners|2012|20120617213431|t02|s002|b003|u001", "occupation": "Maids and Housekeeping Cleaners", "section": "duties", "subsection": "Duties", "evidence_text": "Change sheets and towels; make beds; wash, fold, and iron clothes"}, {"dev_order": "8", "unit_id": "life-physical-and-social-science/forensic-science-technicians|2014|20140704030917|t02|s002|b010|u001", "occupation": "Forensic science technicians", "section": "duties", "subsection": "Duties", "evidence_text": "Explore possible links between suspects and criminal activity using the results of scientific analyses"}, {"dev_order": "9", "unit_id": "office-and-administrative-support/customer-service-representatives|2012|20120617212840|t02|s002|b014|u002", "occupation": "Customer Service Representatives", "section": "duties", "subsection": "Duties", "evidence_text": "For instance, representatives who work in banks may answer customers’ questions about their accounts, whereas representatives who work for utility and communication companies may help customers with service problems, such as outages."}, {"dev_order": "10", "unit_id": "life-physical-and-social-science/medical-scientists|2012|20120616190551|t02|s002|b019|u001", "occupation": "Medical Scientists", "section": "duties", "subsection": "Duties", "evidence_text": "In private industry, medical scientists focus on the development of products such as pharmaceutical drugs and medical instruments."}, {"dev_order": "11", "unit_id": "management/legislators|2012|20120527052108|t02|s002|b019|u002", "occupation": "Legislators", "section": "duties", "subsection": "Duties", "evidence_text": "About 9 out of 10 legislators work in local government."}, {"dev_order": "12", "unit_id": "education-training-and-library/curators-museum-technicians-and-conservators|2014|20140628074731|t02|s002|b029|u001", "occupation": "Archivists, curators, and museum workers", "section": "duties", "subsection": "Duties", "evidence_text": "Conservators manage, preserve, treat, and keep records of works of art, artifacts, and specimens—work that may require substantial historical, scientific, and archaeological research."}, {"dev_order": "13", "unit_id": "office-and-administrative-support/customer-service-representatives|2014|20140704020230|t02|s002|b011|u005", "occupation": "Customer service representatives", "section": "duties", "subsection": "Duties", "evidence_text": "Some representatives make changes to customers’ accounts, such as updating addresses or canceling orders."}, {"dev_order": "14", "unit_id": "business-and-financial/fundraisers|2014|20140704045648|t02|s002|b003|u001", "occupation": "Fundraisers", "section": "duties", "subsection": "Duties", "evidence_text": "Create a strong fundraising message that appeals to potential donors"}, {"dev_order": "15", "unit_id": "life-physical-and-social-science/microbiologists|2014|20140704023536|t02|s002|b015|u001", "occupation": "Microbiologists", "section": "duties", "subsection": "Duties", "evidence_text": "Clinical microbiologists study how microorganisms live and interact with their environments so that they can later be used to cause, cure, or treat diseases in humans, plants, or animals."}, {"dev_order": "16", "unit_id": "healthcare/diagnostic-medical-sonographers|2014|20140703014131|t02|s002|b006|u001", "occupation": "Diagnostic medical sonographers and cardiovascular technologists and technicians, including vascular technologists", "section": "duties", "subsection": "Duties", "evidence_text": "Recognize the difference between normal and abnormal images and other diagnostic information"}, {"dev_order": "17", "unit_id": "office-and-administrative-support/receptionists|2012|20120616185805|t02|s002|b013|u003", "occupation": "Receptionists", "section": "duties", "subsection": "Duties", "evidence_text": "When they are not busy with callers, most workers are expected to help other administrative employees by doing a variety of other office tasks."}, {"dev_order": "18", "unit_id": "installation-maintenance-and-repair/telecommunications-equipment-installers-and-repairers-except-line-installers|2012|20120616194455|t02|s002|b015|u003", "occupation": "Telecommunications Equipment Installers and Repairers Except Line Installers", "section": "duties", "subsection": "Duties", "evidence_text": "Some systems use voiceover Internet protocol—or VoIP—technology, which functions like PBX systems, but uses computers to run Internet access, network applications, and telephone communications."}, {"dev_order": "19", "unit_id": "media-and-communication/technical-writers|2014|20140627095837|t02|s002|b012|u001", "occupation": "Technical writers", "section": "duties", "subsection": "Duties", "evidence_text": "Technical writers often work with computer hardware engineers, scientists, computer support specialists, and software developers to manage the flow of information among project workgroups during development and testing."}, {"dev_order": "20", "unit_id": "construction-and-extraction/hazardous-materials-removal-workers|2014|20140704024837|t02|s002|b002|u001", "occupation": "Hazardous materials removal workers", "section": "duties", "subsection": "Duties", "evidence_text": "Follow safety procedures during cleanup"}, {"dev_order": "21", "unit_id": "media-and-communication/interpreters-and-translators|2014|20140701171259|t02|s002|b026|u005", "occupation": "Interpreters and translators", "section": "duties", "subsection": "Duties", "evidence_text": "Both interpreters and translators must have strong understanding of legal terminology in both languages."}, {"dev_order": "22", "unit_id": "life-physical-and-social-science/political-scientists|2014|20140701130438|t02|s002|b011|u002", "occupation": "Political scientists", "section": "duties", "subsection": "Duties", "evidence_text": "For example, they may use historical documents to analyze past government structures and policies."}, {"dev_order": "23", "unit_id": "life-physical-and-social-science/atmospheric-scientists-including-meteorologists|2014|20140627203331|t02|s002|b008|u001", "occupation": "Atmospheric scientists, including meteorologists", "section": "duties", "subsection": "Duties", "evidence_text": "Plan, organize, and participate in outreach programs aimed at educating the public about weather"}, {"dev_order": "24", "unit_id": "math/operations-research-analysts|2012|20120616192458|t02|s002|b007|u001", "occupation": "Operations Research Analysts", "section": "duties", "subsection": "Duties", "evidence_text": "Based on their findings, advise managers and other decision makers on the appropriate course of action to take to solve a problem"}, {"dev_order": "25", "unit_id": "computer-and-information-technology/information-security-analysts-web-developers-and-computer-network-architects|2012|20120616201227|t02|s002|b028|u001", "occupation": "Information Security Analysts, Web Developers, and Computer Network Architects", "section": "duties", "subsection": "Duties", "evidence_text": "Work with graphics and other designers to determine the website’s layout"}, {"dev_order": "26", "unit_id": "life-physical-and-social-science/chemical-technicians|2012|20120616192453|t02|s002|b011|u001", "occupation": "Chemical Technicians", "section": "duties", "subsection": "Duties", "evidence_text": "Processing technicians monitor the quality of products and processes at chemical manufacturing facilities."}, {"dev_order": "27", "unit_id": "media-and-communication/photographers|2012|20120616172252|t02|s002|b015|u001", "occupation": "Photographers", "section": "duties", "subsection": "Duties", "evidence_text": "Aerial photographers use planes or helicopters to capture photographs of buildings and landscapes."}, {"dev_order": "28", "unit_id": "life-physical-and-social-science/chemists-and-materials-scientists|2012|20120616190546|t02|s002|b018|u002", "occupation": "Chemists and Materials Scientists", "section": "duties", "subsection": "Duties", "evidence_text": "They work on teams with other scientists and engineers to create and test new drug products."}, {"dev_order": "29", "unit_id": "protective-service/police-and-detectives|2013|20130630002625|t02|s002|b008|u001", "occupation": "Police and detectives", "section": "duties", "subsection": "Duties", "evidence_text": "Prepare cases and testify in court"}, {"dev_order": "30", "unit_id": "architecture-and-engineering/petroleum-engineers|2012|20120616173719|t02|s002|b007|u001", "occupation": "Petroleum Engineers", "section": "duties", "subsection": "Duties", "evidence_text": "Make sure that oil field equipment is installed, operated, and maintained properly"}, {"dev_order": "31", "unit_id": "transportation-and-material-moving/water-transportation-occupations|2012|20120616174741|t02|s002|b019|u001", "occupation": "Water Transportation Occupations", "section": "duties", "subsection": "Duties", "evidence_text": "Prepare a maintenance and repair budget"}, {"dev_order": "32", "unit_id": "transportation-and-material-moving/delivery-truck-drivers-and-driver-sales-workers|2012|20120616173133|t02|s002|b012|u003", "occupation": "Delivery Truck Drivers and Driver/Sales Workers", "section": "duties", "subsection": "Duties", "evidence_text": "For example, they may make regular deliveries to a hardware store and encourage the store’s manager to offer a new type of product."}, {"dev_order": "33", "unit_id": "life-physical-and-social-science/psychologists|2012|20120616174211|t02|s002|b011|u001", "occupation": "Psychologists", "section": "duties", "subsection": "Duties", "evidence_text": "Psychology seeks to understand and explain thoughts, emotions, feelings, and behavior."}, {"dev_order": "34", "unit_id": "media-and-communication/editors|2012|20120615161650|t02|s002|b013|u002", "occupation": "Editors", "section": "duties", "subsection": "Duties", "evidence_text": "They suggest revisions, such as changing words and rearranging sentences and paragraphs to improve clarity or accuracy."}, {"dev_order": "35", "unit_id": "production/dental-and-ophthalmic-laboratory-technicians-and-medical-appliance-technicians|2014|20140704035135|t02|s002|b016|u002", "occupation": "Dental and ophthalmic laboratory technicians and medical appliance technicians", "section": "duties", "subsection": "Duties", "evidence_text": "For example, some medical appliance technicians make hearing aids."}, {"dev_order": "36", "unit_id": "installation-maintenance-and-repair/line-installers-and-repairers|2012|20120630124919|t02|s002|b019|u002", "occupation": "Line Installers and Repairers", "section": "duties", "subsection": "Duties", "evidence_text": "They routinely work with high-voltage electricity, which requires extreme caution."}, {"dev_order": "37", "unit_id": "food-preparation-and-serving/food-preparation-workers|2012|20120529012044|t02|s002|b011|u002", "occupation": "Food Preparation Workers", "section": "duties", "subsection": "Duties", "evidence_text": "Other common duties include keeping salad bars and buffet tables stocked and clean."}, {"dev_order": "38", "unit_id": "architecture-and-engineering/surveying-and-mapping-technicians|2012|20120616203502|t02|s002|b010|u001", "occupation": "Surveying and Mapping Technicians", "section": "duties", "subsection": "Duties", "evidence_text": "Produce maps showing boundaries, water locations, elevation, and other features of the terrain"}, {"dev_order": "39", "unit_id": "office-and-administrative-support/bookkeeping-accounting-and-auditing-clerks|2012|20120617214007|t02|s002|b013|u002", "occupation": "Bookkeeping, Accounting, and Auditing Clerks", "section": "duties", "subsection": "Duties", "evidence_text": "Many of these functions require clerks to communicate with clients."}, {"dev_order": "40", "unit_id": "business-and-financial/budget-analysts|2012|20120616165509|t02|s002|b010|u004", "occupation": "Budget Analysts", "section": "duties", "subsection": "Duties", "evidence_text": "Although elected officials (in government) or top executives (in a private company) usually make the final decision on an organization's budget, they rely on the work of budget analysts to prepare the information for that decision."}, {"dev_order": "41", "unit_id": "installation-maintenance-and-repair/automotive-service-technicians-and-mechanics|2012|20120617214012|t04|s006|b005|u003", "occupation": "Automotive Service Technicians and Mechanics", "section": "important_qualities", "subsection": "Important Qualities", "evidence_text": "They must be familiar with electronic control systems and the appropriate tools needed to fix and maintain them."}, {"dev_order": "42", "unit_id": "education-training-and-library/career-and-technical-education-teachers|2012|20120616173629|t04|s006|b001|u003", "occupation": "Career and Technical Education Teachers", "section": "important_qualities", "subsection": "Important Qualities", "evidence_text": "In addition, they need to discuss students’ needs with parents and administrators."}, {"dev_order": "43", "unit_id": "education-training-and-library/archivists|2012|20120616174432|t04|s005|b003|u002", "occupation": "Archivists", "section": "important_qualities", "subsection": "Important Qualities", "evidence_text": "Archivists work with the general public on a regular basis."}, {"dev_order": "44", "unit_id": "healthcare/dental-assistants|2014|20140630231224|t04|s004|b002|u003", "occupation": "Dental assistants", "section": "important_qualities", "subsection": "Important Qualities", "evidence_text": "Sometimes, patients are in extreme pain and/or mental stress, so the assistant should be sensitive to their emotions."}, {"dev_order": "45", "unit_id": "healthcare/diagnostic-medical-sonographers|2014|20140703014131|t04|s003|b004|u002", "occupation": "Diagnostic medical sonographers and cardiovascular technologists and technicians, including vascular technologists", "section": "important_qualities", "subsection": "Important Qualities", "evidence_text": "Diagnostic imaging workers are on their feet for long periods and must be able to lift and move patients who need assistance."}, {"dev_order": "46", "unit_id": "healthcare/radiologic-technologists|2014|20140704021312|t04|s005|b001|u002", "occupation": "Radiologic and MRI technologists", "section": "important_qualities", "subsection": "Important Qualities", "evidence_text": "Radiologic and MRI technologists must follow exact instructions to get the images needed to diagnose and treat the patient."}, {"dev_order": "47", "unit_id": "community-and-social-service/social-and-human-service-assistants|2014|20140704031848|t04|s005|b004|u002", "occupation": "Social and human service assistants", "section": "important_qualities", "subsection": "Important Qualities", "evidence_text": "Social and human service assistants often must complete lots of paperwork and work with many different clients."}, {"dev_order": "48", "unit_id": "healthcare/physician-assistants|2014|20140704021454|t04|s004|b003|u002", "occupation": "Physician assistants", "section": "important_qualities", "subsection": "Important Qualities", "evidence_text": "Physician assistants should be focused and observant to evaluate and treat patients properly."}, {"dev_order": "49", "unit_id": "healthcare/massage-therapists|2015|20150905053401|t04|s004|b004|u002", "occupation": "Massage therapists", "section": "important_qualities", "subsection": "Important Qualities", "evidence_text": "Massage therapists may give several treatments during a workday and have to stay on their feet throughout massage appointments."}, {"dev_order": "50", "unit_id": "education-training-and-library/career-and-technical-education-teachers|2014|20140704025438|t04|s007|b004|u002", "occupation": "Career/technical education teachers", "section": "important_qualities", "subsection": "Important Qualities", "evidence_text": "Teachers develop different ways to present information and to demonstrate a task so that students can learn."}, {"dev_order": "51", "unit_id": "installation-maintenance-and-repair/medical-equipment-repairers|2012|20120616194450|t04|s004|b003|u002", "occupation": "Medical Equipment Repairers", "section": "important_qualities", "subsection": "Important Qualities", "evidence_text": "Standing, crouching, and bending in awkward positions are common when making repairs to equipment."}, {"dev_order": "52", "unit_id": "healthcare/orthotists-and-prosthetists|2012|20120617061323|t04|s004|b001|u003", "occupation": "Orthotists and Prosthetists", "section": "important_qualities", "subsection": "Important Qualities", "evidence_text": "They must be able to communicate effectively with the technicians who often create the medical devices."}, {"dev_order": "53", "unit_id": "business-and-financial/management-analysts|2012|20120615160300|t04|s006|b004|u003", "occupation": "Management Analysts", "section": "important_qualities", "subsection": "Important Qualities", "evidence_text": "Although some aspects of different clients' problems may be similar, each situation is likely to present unique challenges for the analyst to solve."}, {"dev_order": "54", "unit_id": "management/financial-managers|2012|20120615160343|t04|s006|b003|u002", "occupation": "Financial Managers", "section": "important_qualities", "subsection": "Important Qualities", "evidence_text": "In preparing and analyzing reports such as balance sheets and income statements, financial managers must pay attention to detail."}, {"dev_order": "55", "unit_id": "healthcare/home-health-and-personal-care-aides|2012|20120616204554|t02|s001|b001|u002", "occupation": "Home Health and Personal Care Aides", "section": "occupational_description", "subsection": "What Home Health and Personal Care Aides Do", "evidence_text": "They also help older adults who may need assistance."}, {"dev_order": "56", "unit_id": "healthcare/occupational-therapy-assistants-and-aides|2012|20120616174341|t02|s001|b001|u001", "occupation": "Occupational Therapy Assistants and Aides", "section": "occupational_description", "subsection": "What Occupational Therapy Assistants and Aides Do", "evidence_text": "Occupational therapy assistants and aides work under the direction of occupational therapists in treating patients with injuries, illnesses, or disabilities through the therapeutic use of everyday activities."}, {"dev_order": "57", "unit_id": "healthcare/pharmacists|2014|20140701180028|t02|s001|b001|u002", "occupation": "Pharmacists", "section": "occupational_description", "subsection": "What Pharmacists Do", "evidence_text": "They also may provide advice on how to lead a healthy lifestyle, conduct health and wellness screenings, provide immunizations, and oversee the medications given to patients."}, {"dev_order": "58", "unit_id": "sales/wholesale-and-manufacturing-sales-representatives|2012|20120704180244|t02|s001|b001|u002", "occupation": "Wholesale and Manufacturing Sales Representatives", "section": "occupational_description", "subsection": "What Wholesale and Manufacturing Sales Representatives Do", "evidence_text": "They contact customers, explain product features, answer any questions that their customers may have, and negotiate prices."}, {"dev_order": "59", "unit_id": "office-and-administrative-support/postal-service-workers|2012|20120617214512|t02|s001|b001|u001", "occupation": "Postal Service Workers", "section": "occupational_description", "subsection": "What Postal Service Workers Do", "evidence_text": "Postal Service workers sell postal products and collect, sort, and deliver mail."}, {"dev_order": "60", "unit_id": "healthcare/nuclear-medicine-technologists|2012|20120703145102|t02|s001|b001|u001", "occupation": "Nuclear Medicine Technologists", "section": "occupational_description", "subsection": "What Nuclear Medicine Technologists Do", "evidence_text": "Nuclear medicine technologists use a scanner to create images of various areas of a patient’s body."}];
-const KEY = "ooh_devset_coding_v1";
-let store = { coder: "", units: {} };
+const KEY = "ooh_devset_coding_v2";
+let store = { coder:"", units:{} };
 try {
   const raw = JSON.parse(localStorage.getItem(KEY) || "null");
   if (raw && raw.units) store = raw;
-  else if (raw) store = { coder: "", units: raw };   // migrate earlier format
 } catch (e) {}
 let state = store.units;
-let i = 0, sel = "", type = "", expl = "";
+let i = 0, anchor = null, focus = null, type = "", expl = "explicit";
 
 const $ = id => document.getElementById(id);
 const cur = () => UNITS[i];
-const rec = () => state[cur().unit_id] || (state[cur().unit_id] =
-  { assessment: "", mentions: [], notes: "" });
+const esc = s => s.replace(/[&<>]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
+const rec = () => state[cur().unit_id] ||
+  (state[cur().unit_id] = { assessment:"", mentions:[], notes:"" });
+
+function toks(text) {
+  const out = [], re = /\S+/g; let m;
+  while ((m = re.exec(text)) !== null) out.push([m.index, m.index + m[0].length]);
+  return out;
+}
+function spanText() {
+  if (anchor === null) return "";
+  const T = toks(cur().evidence_text);
+  const a = Math.min(anchor, focus), b = Math.max(anchor, focus);
+  return cur().evidence_text.slice(T[a][0], T[b][1]);
+}
 
 function save() {
   store.units = state;
@@ -155,103 +172,131 @@ function save() {
 }
 
 function render() {
-  const u = cur(), r = rec();
-  $("meta").textContent = `${i + 1} de ${UNITS.length}  ·  ${u.occupation}  ·  ${u.subsection}`;
-  $("sentence").textContent = u.evidence_text;
+  const u = cur(), r = rec(), text = u.evidence_text, T = toks(text);
+  $("meta").textContent = `${i+1} de ${UNITS.length}  ·  ${u.occupation}  ·  ${u.subsection}`;
+
+  const lo = anchor === null ? -1 : Math.min(anchor, focus);
+  const hi = anchor === null ? -2 : Math.max(anchor, focus);
+  let html = "", prev = 0;
+  T.forEach(([s,e],k) => {
+    html += esc(text.slice(prev,s));
+    const on = k >= lo && k <= hi ? " on" : "";
+    html += `<span class="w${on}" data-k="${k}">${esc(text.slice(s,e))}</span>`;
+    prev = e;
+  });
+  html += esc(text.slice(prev));
+  $("sentence").innerHTML = html;
+  $("sentence").querySelectorAll(".w").forEach(el => {
+    el.onclick = () => {
+      const k = +el.dataset.k;
+      if (anchor === null) { anchor = k; focus = k; }
+      else if (k === anchor && k === focus) { anchor = null; focus = null; }
+      else { focus = k; }
+      render();
+    };
+  });
+
+  const st = spanText();
+  $("spantxt").textContent = st ? `— ${st}` : "— selecciona palabras arriba";
   $("notes").value = r.notes || "";
-  document.querySelectorAll("[data-assess]").forEach(b =>
-    b.classList.toggle("on", b.dataset.assess === r.assessment));
   document.querySelectorAll("[data-type]").forEach(b =>
     b.classList.toggle("on", b.dataset.type === type));
   document.querySelectorAll("[data-expl]").forEach(b =>
     b.classList.toggle("on", b.dataset.expl === expl));
-  $("span").textContent = sel || "nada seleccionado";
-  $("span").className = "span-box" + (sel ? "" : " empty");
-  $("mention-card").style.display =
-    r.assessment === "contains_requirement" ? "" : "none";
 
   const tb = $("tbl").querySelector("tbody");
   tb.innerHTML = "";
-  r.mentions.forEach((m, k) => {
+  r.mentions.forEach((m,k) => {
     const tr = document.createElement("tr");
     tr.innerHTML = `<td>${esc(m.span)}</td><td>${esc(m.label)}</td>` +
-      `<td>${m.type}</td><td>${m.expl}</td>`;
-    const td = document.createElement("td");
-    const b = document.createElement("button");
+                   `<td>${m.type}</td><td>${m.expl}</td>`;
+    const td = document.createElement("td"), b = document.createElement("button");
     b.textContent = "borrar"; b.className = "danger";
-    b.onclick = () => { r.mentions.splice(k, 1); save(); };
+    b.onclick = () => {
+      r.mentions.splice(k,1);
+      if (!r.mentions.length && r.assessment === "contains_requirement") r.assessment = "";
+      save();
+    };
     td.appendChild(b); tr.appendChild(td); tb.appendChild(tr);
   });
 
   const n = Object.values(state).filter(x => x.assessment).length;
   $("done").textContent = n;
-  $("prog").style.width = (100 * n / UNITS.length) + "%";
+  $("prog").style.width = (100*n/UNITS.length) + "%";
   $("status").textContent = r.assessment || "sin codificar";
+  $("status").className = "pill" + (r.assessment ? "" : " none");
 }
 
-const esc = s => s.replace(/[&<>]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
+function go(step) {
+  const j = i + step;
+  if (j < 0 || j >= UNITS.length) return;
+  i = j; anchor = null; focus = null; type = ""; expl = "explicit";
+  $("label").value = "";
+  render();
+}
 
-$("sentence").addEventListener("mouseup", () => {
-  const s = String(window.getSelection()).trim();
-  if (s && cur().evidence_text.includes(s)) { sel = s; render(); }
-});
-
-document.querySelectorAll("[data-assess]").forEach(b => b.onclick = () => {
+$("add").onclick = () => {
+  const span = spanText(), label = $("label").value.trim();
+  if (!span) return alert("Hace clic en las palabras del span.");
+  if (!label) return alert("Escribi una etiqueta.");
+  if (!type) return alert("Elegi un tipo (1-4).");
   const r = rec();
-  r.assessment = b.dataset.assess;
-  if (r.assessment !== "contains_requirement") r.mentions = [];
+  r.mentions.push({ span, label, type, expl });
+  r.assessment = "contains_requirement";
+  anchor = null; focus = null; type = ""; expl = "explicit";
+  $("label").value = "";
   save();
-});
+};
+$("clear").onclick = () => { anchor = null; focus = null; render(); };
+$("none").onclick = () => {
+  const r = rec(); r.assessment = "no_requirement"; r.mentions = [];
+  save(); go(1);
+};
+$("amb").onclick = () => {
+  const r = rec(); r.assessment = "ambiguous"; r.mentions = [];
+  save(); go(1);
+};
 document.querySelectorAll("[data-type]").forEach(b =>
   b.onclick = () => { type = b.dataset.type; render(); });
 document.querySelectorAll("[data-expl]").forEach(b =>
   b.onclick = () => { expl = b.dataset.expl; render(); });
-
-$("add").onclick = () => {
-  const label = $("label").value.trim();
-  if (!sel) return alert("Selecciona primero un span en la oracion.");
-  if (!label) return alert("Escribe una etiqueta.");
-  if (!type) return alert("Elige un tipo.");
-  if (!expl) return alert("Elige la explicitud.");
-  rec().mentions.push({ span: sel, label, type, expl });
-  sel = ""; $("label").value = ""; type = ""; expl = "";
-  save();
-};
-$("clear").onclick = () => {
-  sel = ""; $("label").value = ""; type = ""; expl = ""; render();
-};
+$("prev").onclick = () => go(-1);
+$("next").onclick = () => go(1);
 $("notes").oninput = () => { rec().notes = $("notes").value; };
 $("notes").onblur = save;
-$("prev").onclick = () => { if (i > 0) { i--; sel = ""; render(); } };
-$("next").onclick = () => { if (i < UNITS.length - 1) { i++; sel = ""; render(); } };
-document.addEventListener("keydown", e => {
-  if (e.target.tagName === "INPUT") return;
-  if (e.key === "ArrowLeft") $("prev").click();
-  if (e.key === "ArrowRight") $("next").click();
-});
-
 $("coder").oninput = () => { store.coder = $("coder").value.trim(); };
 $("coder").onblur = save;
+$("hide-intro").onclick = () => { $("intro").style.display = "none"; };
+
+document.addEventListener("keydown", e => {
+  if (e.target.tagName === "INPUT") {
+    if (e.key === "Enter") $("add").click();
+    return;
+  }
+  const types = ["skill","ability","knowledge","work_activity"];
+  if (["1","2","3","4"].includes(e.key)) { type = types[+e.key-1]; render(); }
+  if (e.key === "Enter") $("add").click();
+  if (e.key === "ArrowLeft") go(-1);
+  if (e.key === "ArrowRight") go(1);
+});
 
 $("export").onclick = () => {
   const who = (store.coder || "").replace(/[^A-Za-z0-9_-]/g, "");
   if (!who) { $("coder").focus(); return alert("Escribi tus iniciales arriba."); }
   const pending = UNITS.filter(u => !(state[u.unit_id] || {}).assessment).length;
-  if (pending && !confirm(`Faltan ${pending} unidades sin codificar. Exportar igual?`)) return;
-
-  const q = v => '"' + String(v == null ? "" : v).replace(/"/g, '""') + '"';
-  const head = ["dev_order", "unit_id", "coder", "occupation", "section", "subsection",
-    "evidence_text", "human_assessment", "human_mentions", "human_notes"];
+  if (pending && !confirm(`Faltan ${pending} unidades. Exportar igual?`)) return;
+  const q = v => '"' + String(v == null ? "" : v).replace(/"/g,'""') + '"';
+  const head = ["dev_order","unit_id","coder","occupation","section","subsection",
+    "evidence_text","human_assessment","human_mentions","human_notes"];
   const lines = [head.join(",")];
   UNITS.forEach(u => {
-    const r = state[u.unit_id] || { assessment: "", mentions: [], notes: "" };
-    const ms = (r.mentions || []).map(m =>
-      [m.span, m.label, m.type, m.expl].join(" :: ")).join(" | ");
-    lines.push([u.dev_order, u.unit_id, who, u.occupation, u.section, u.subsection,
-      u.evidence_text, r.assessment || "", ms, r.notes || ""].map(q).join(","));
+    const r = state[u.unit_id] || { assessment:"", mentions:[], notes:"" };
+    const ms = (r.mentions||[]).map(m =>
+      [m.span,m.label,m.type,m.expl].join(" :: ")).join(" | ");
+    lines.push([u.dev_order,u.unit_id,who,u.occupation,u.section,u.subsection,
+      u.evidence_text,r.assessment||"",ms,r.notes||""].map(q).join(","));
   });
-  const blob = new Blob(["\ufeff" + lines.join("\n")],
-    { type: "text/csv;charset=utf-8" });
+  const blob = new Blob(["\ufeff" + lines.join("\n")], {type:"text/csv;charset=utf-8"});
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
   a.download = `06_devset_human_coded_${who}.csv`;
